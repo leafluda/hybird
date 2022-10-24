@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>캔버스 튜토리얼</title>
+	<style media="screen">
+		#ele_canvas{
+			background-color: skyblue;
+		}
+	</style>
+</head>
+<body>
+	<!-- 1. 캔버스 태그 삽입 -->
+	<canvas id="ele_canvas" width="300" height="300"></canvas>
+	<script>
+		// 2. 캔버스요소 가져오기
+		var ele_canvas = document.getElementById("ele_canvas");
+		// 3. 드로잉용 컨텍스트 생
+    var context_canvas = ele_canvas.getContext("2d")
+
+		var isclick = false;
+		// 4. 생성한 컨텍스트를 이용해서 드로잉하기
+
+		context_canvas.fillStyle = "red"; // 색상
+		context_canvas.fillRect(50, 50, 100, 100); // 도형
+
+		function deC(){
+			if(isclick != true){
+			context_canvas.fillStyle = "blue";
+			context_canvas.fillRect(50, 50, 100, 100);
+		}
+		}
+
+		function deO(){
+			if(isclick != true){
+			context_canvas.fillStyle = "red"; // 색상
+			context_canvas.fillRect(50, 50, 100, 100); // 도형
+			}
+		}
+
+		function cle(){
+			if(isclick != true){
+				context_canvas.fillStyle = "green"; // 색상
+				context_canvas.fillRect(50, 50, 100, 100); // 도형
+				isclick = true;
+			}
+		}
+
+		function deOup(){
+			if(isclick = true){
+			context_canvas.fillStyle = "blue"; // 색상
+			context_canvas.fillRect(50, 50, 100, 100); // 도형
+			}
+			isclick = false;
+		}
+
+		ele_canvas.onmousedown = function(event){
+			const x = event.clientX - context_canvas.canvas.offsetLeft;
+			const y = event.clientY - context_canvas.canvas.offsetTop;
+			if(x >= 50 && x<= 150 && y >= 50 && y <= 150)
+			{
+				cle();
+			}
+		}
+
+		ele_canvas.onmouseup = function(event){
+			const x = event.clientX - context_canvas.canvas.offsetLeft;
+			const y = event.clientY - context_canvas.canvas.offsetTop;
+			if(x >= 50 && x<= 150 && y >= 50 && y <= 150)
+			{
+				deOup();
+			}
+		}
+
+		ele_canvas.onmousemove = function(event){
+			const x = event.clientX - context_canvas.canvas.offsetLeft;
+			const y = event.clientY - context_canvas.canvas.offsetTop;
+			if(x >= 50 && x<= 150 && y >= 50 && y <= 150)
+			{
+				deC();
+			}else{
+				deO();
+			}
+		}
+	</script>
+</body>
+</html>
