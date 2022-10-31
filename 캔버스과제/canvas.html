@@ -30,14 +30,14 @@
 
 		    Make_Sub_Canvas(){
                 this.S_canvas.fillStyle = `${this.SC_Color}`; // 색상
-		        this.S_canvas.fillRect( this.x, this.y, this.N_width, this.N_width);
+		        this.S_canvas.fillRect( this.x, this.y, this.N_width, this.N_height);
                 isclick = false; // 도형   
 		    } 
 
             On_Sub_Cansvas(){
 			if(isclick != true){
                 this.S_canvas.fillStyle = "green"; // 색상
-				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_width); // 도형
+				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_height); // 도형
 				isclick = true;
 			}
 		    }
@@ -45,7 +45,7 @@
             Click_Sub_Cansvas(){
 			if(isclick == true){
                 this.S_canvas.fillStyle = "red"; // 색상
-				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_width);
+				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_height);
                 isclick = true; // 도형
 			}
 		    }
@@ -53,43 +53,60 @@
             UnClick_Sub_Cansvas(){
 			if(isclick == true){
                 this.S_canvas.fillStyle = "green"; // 색상
-				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_width); // 도형
+				this.S_canvas.fillRect(this.x, this.y, this.N_width, this.N_height); // 도형
 			}
 		    }
 
-            }
-
-            var canvas1 = new Canvas(M_canvas,S_canvas,"gray",100,100,300,300);
-            canvas1.Make_Sub_Canvas();
-
-            M_canvas.onmousemove = function(event){
-			const x = event.clientX - S_canvas.canvas.offsetLeft;
-			const y = event.clientY - S_canvas.canvas.offsetTop;
-            
-			if(x >= 100 && x<= 400 && y >= 100 && y <= 400)
+			inM(cx,cy){
+			if(cx >= this.x && cx<= this.N_width+this.x && cy >= this.y && cy <= this.N_height+this.y)
 			{
                 canvas1.On_Sub_Cansvas();
 			}else{
 				canvas1.Make_Sub_Canvas();
 			}
-		    }
+			}
 
-            M_canvas.onmousedown = function(event){
-			const x = event.clientX - S_canvas.canvas.offsetLeft;
-			const y = event.clientY - S_canvas.canvas.offsetTop;
-			if(x >= 100 && x<= 400 && y >= 100 && y <= 400)
+			inU(cx,cy){
+			if(cx >= this.x && cx<= this.N_width+this.x && cy >= this.y && cy <= this.N_height+this.y)
 			{
 				canvas1.Click_Sub_Cansvas();
 			}
-		    }
+			}
 
-		    M_canvas.onmouseup = function(event){
-			const x = event.clientX - S_canvas.canvas.offsetLeft;
-			const y = event.clientY - S_canvas.canvas.offsetTop;
-			if(x >= 100 && x<= 400 && y >= 100 && y <= 400)
+			inD(cx,cy){
+			if(cx >= this.x && cx<= this.N_width+this.x && cy >= this.y && cy <= this.N_height+this.y)
 			{
 				canvas1.UnClick_Sub_Cansvas();
 			}
+
+            }
+		}
+
+
+            var canvas1 = new Canvas(M_canvas,S_canvas,"gray",100,100,300,300);
+            canvas1.Make_Sub_Canvas();
+
+            M_canvas.onmousemove = function(event){
+			const cx = event.clientX - S_canvas.canvas.offsetLeft;
+			const cy = event.clientY - S_canvas.canvas.offsetTop;
+            
+			canvas1.inM(cx,cy);
+
+		    }
+
+            M_canvas.onmousedown = function(event){
+			const cx = event.clientX - S_canvas.canvas.offsetLeft;
+			const cy = event.clientY - S_canvas.canvas.offsetTop;
+			
+			canvas1.inD(cx,cy);
+		    }
+
+		    M_canvas.onmouseup = function(event){
+			const cx = event.clientX - S_canvas.canvas.offsetLeft;
+			const cy = event.clientY - S_canvas.canvas.offsetTop;
+			
+			canvas1.inU(cx,cy)
+			
 		    }
             
             var canvas1 = new Canvas(M_canvas,S_canvas,"gray",100,100,300,300);
