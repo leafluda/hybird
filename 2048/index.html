@@ -47,15 +47,17 @@
     <script src="https://unpkg.com/vue@3"></script>
     
     <div id="app">
-        <div class="bg" v-for="index in bgs">{{index}}</div>        
-        <div class="block">2</div>        
+        <div class="bg" v-for="index in bgs">{{index}}</div>           
     </div>
     
     <script>
+
+    var board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+
         function keyArrowRight(){
     console.log("Right Pressed.");
     let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i < blocks.length; i++){
+    for (let i = 0; i < blocks.length; i++){    
         blocks[i].style.left = 470;   
     }
 }
@@ -87,19 +89,44 @@ function keylog(e){
     switch(e.key){
         case 'ArrowRight':
             keyArrowRight();
+            newblock();
             break;
         case 'ArrowLeft':
             keyArrowLeft();
+            newblock();
             break;
         case 'ArrowUp':
             keyArrowUp();
+            newblock();
             break;
         case 'ArrowDown':
             keyArrowDown();
+            newblock();
             break;
         default:
             break;
     }
+}
+
+function newblock(){
+    while(true)
+    {
+        var x = parseInt(Math.random() * 3.99);
+        var y = parseInt(Math.random() * 3.99);
+
+        if(board[x][y]==0)
+        {   
+            board[x][y]=1;
+            break;
+        }
+    }
+    var app = document.getElementById('app');
+    var div = document.createElement('div');
+    div.setAttribute('class','block');
+    div.innerText = "2";
+    app.append(div);
+    div.style.left += 20+(150*x);
+    div.style.top += 20+(150*y);
 }
 
 window.onkeydown = keylog;
