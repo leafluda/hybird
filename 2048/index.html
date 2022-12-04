@@ -43,7 +43,7 @@
 }
     </style>
 </head>
-<body>
+<body onload="newblock()">
     <script src="https://unpkg.com/vue@3"></script>
     
     <div id="app">
@@ -52,59 +52,165 @@
     
     <script>
 
-    var board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+    class Block
+    {
 
-        function keyArrowRight(){
+        constructor(n, x, y, b_n) {
+        this.n = n;
+        this.x = x;
+        this.y = y;
+        this.b_n = b_n;
+        }
+
+    }
+
+
+    var board = [[0,0,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0]];
+
+    var temp = [[0,0,0,0],
+                [0,0,0,0],
+                [0,0,0,0],
+                [0,0,0,0]];
+
+    function keyArrowRight(){
+
     console.log("Right Pressed.");
-    let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i < blocks.length; i++){    
-        blocks[i].style.left = 470;   
+    removeblock();
+    drawblock();
     }
-}
 
-function keyArrowLeft(){
+    function keyArrowLeft(){
+    var move = true;
     console.log("Left Pressed.");
-    let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i < blocks.length; i++){
-            blocks[i].style.left =20;        
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            temp[x][y] = 0;
+        }
     }
-}
-function keyArrowUp(){
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        var a = 0;
+        for(let y = 0; y < 4; y++)
+        { 
+            if(board[x][y] !=0){
+                if(temp[x][a]==0){
+                    temp[x][a] = board[x][y];  
+                }
+                a++;
+            }
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 1; y < 4; y++)
+        { 
+            if(temp[x][y]==temp[x][y-1]){
+                temp[x][y-1] = temp[x][y-1] + temp[x][y];
+                temp[x][y] = 0;
+            }
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            board[x][y] = 0;
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        var a = 0;
+        for(let y = 0; y < 4; y++)
+        { 
+            if(temp[x][y] !=0){
+                if(board[x][a]==0){
+                    board[x][a] = temp[x][y];  
+                }
+                a++;
+            }
+        }
+    }
+    removeblock();
+    drawblock();
+    newblock();
+    }
+    function keyArrowUp(){
     console.log("Up Pressed.");
-    let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i < blocks.length; i++){
-        blocks[i].style.top = 20;        
+    removeblock();
+    drawblock();
     }
-}
-function keyArrowDown(){
+    function keyArrowDown(){
     console.log("Down Pressed.");
-    let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i < blocks.length; i++){
-        blocks[i].style.top = 470;        
+    removeblock();
+    drawblock();
     }
-}
 
 function keylog(e){
     console.log(e.key);
     switch(e.key){
         case 'ArrowRight':
             keyArrowRight();
-            newblock();
             break;
         case 'ArrowLeft':
             keyArrowLeft();
-            newblock();
             break;
         case 'ArrowUp':
             keyArrowUp();
-            newblock();
             break;
         case 'ArrowDown':
             keyArrowDown();
+            break;
+        case 'n':
             newblock();
             break;
         default:
             break;
+    }
+}
+
+function removeblock(){
+    var app = document.getElementById('app');
+    let blocks = document.getElementsByClassName("block");
+    for (let i = 0; i<16; i++){
+        for (let i = 0; i < blocks.length; i++){
+        app.removeChild(blocks[i]);
+    }
+    }
+}
+
+function drawblock(){
+    for(let i= 0; i<4;i++)
+    {
+        for(let j= 0; j<4;j++)
+        {
+            if(board[i][j] != 0)
+            {
+                var app = document.getElementById('app');
+                var div = document.createElement('div');
+                div.setAttribute('class','block');
+                div.innerText = board[i][j]+ "";
+                app.append(div);
+                div.style.top += 20+(150*i);
+                div.style.left += 20+(150*j);
+            }
+        }
+    }
+    for(let i= 0; i<4;i++)
+    {
+        for(let j= 0; j<4;j++)
+        {
+        console.log(board[i][j]);
+        }
     }
 }
 
@@ -116,7 +222,7 @@ function newblock(){
 
         if(board[x][y]==0)
         {   
-            board[x][y]=1;
+            board[x][y]= 2;
             break;
         }
     }
@@ -124,9 +230,9 @@ function newblock(){
     var div = document.createElement('div');
     div.setAttribute('class','block');
     div.innerText = "2";
-    app.append(div);
-    div.style.left += 20+(150*x);
-    div.style.top += 20+(150*y);
+    app.appendChild(div);
+    div.style.top += 20+(150*x);
+    div.style.left += 20+(150*y);
 }
 
 window.onkeydown = keylog;
