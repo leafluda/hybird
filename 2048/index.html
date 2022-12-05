@@ -34,7 +34,7 @@
     top: 20;
     width: 120;
     height: 120;
-    background-color: rgb(245, 165, 185);
+    background-color: rgb(247, 195, 208);
     text-align: center;            
     line-height: 1.6;
     font-size: 70;
@@ -43,11 +43,11 @@
 }
     </style>
 </head>
-<body onload="newblock()">
+<body onload="startG()">
     <script src="https://unpkg.com/vue@3"></script>
     
     <div id="app">
-        <div class="bg" v-for="index in bgs">{{index}}</div>           
+        <div class="bg" v-for="index in bgs"></div>           
     </div>
     
     <script>
@@ -75,22 +75,98 @@
                 [0,0,0,0],
                 [0,0,0,0]];
 
+    var check = [[0,0,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0]];
+
     function keyArrowRight(){
 
     console.log("Right Pressed.");
-    removeblock();
-    drawblock();
-    }
-
-    function keyArrowLeft(){
-    var move = true;
-    console.log("Left Pressed.");
-
+    var move = false;
     for(let x = 0; x < 4 ; x++)
     {
         for(let y = 0; y < 4; y++)
         { 
             temp[x][y] = 0;
+            check[x][y] = board[x][y]; 
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        var a = 3;
+        for(let y = 3; y > -1 ; y--)
+        { 
+            if(board[x][y] !=0){
+                if(temp[x][a]==0){
+                    temp[x][a] = board[x][y];  
+                }
+                a--;
+            }
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 2; y > -1; y--)
+        { 
+            if(temp[x][y]==temp[x][y+1]){
+                temp[x][y+1] = temp[x][y+1] + temp[x][y];
+                temp[x][y] = 0;
+            }
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            board[x][y] = 0;
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        var a = 3;
+        for(let y = 3; y > -1 ; y--)
+        { 
+            if(temp[x][y] !=0){
+                if(board[x][a]==0){
+                    board[x][a] = temp[x][y];  
+                }
+                a--;
+            }
+        }
+    }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+           if(board[x][y]!=check[x][y])
+           {
+            move = true;
+           }
+        }
+    }
+    removeblock();
+    drawblock();
+    if(move == true)
+    {
+      newblock();  
+    }
+    }
+
+    function keyArrowLeft(){
+    console.log("Left Pressed.");
+    var move = false;
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            temp[x][y] = 0;
+            check[x][y] = board[x][y]; 
         }
     }
 
@@ -140,22 +216,184 @@
             }
         }
     }
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+           if(board[x][y]!=check[x][y])
+           {
+            move = true;
+           }
+        }
+    }
     removeblock();
     drawblock();
-    newblock();
+    if(move == true)
+    {
+      newblock();  
     }
+    }
+    
     function keyArrowUp(){
     console.log("Up Pressed.");
-    removeblock();
-    drawblock();
-    }
-    function keyArrowDown(){
-    console.log("Down Pressed.");
-    removeblock();
-    drawblock();
+    var move = false;
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            temp[x][y] = 0;
+            check[x][y] = board[x][y]; 
+        }
     }
 
-function keylog(e){
+    for(let y = 0; y < 4 ; y++)
+    {
+        var a = 0;
+        for(let x = 0; x < 4; x++)
+        { 
+            if(board[x][y] !=0){
+                if(temp[a][y]==0){
+                    temp[a][y] = board[x][y];  
+                }
+                a++;
+            }
+        }
+    }
+
+    for(let y = 0; y < 4 ; y++)
+    {
+        for(let x = 1; x < 4; x++)
+        { 
+            if(temp[x][y]==temp[x-1][y]){
+                temp[x-1][y] = temp[x-1][y] + temp[x][y];
+                temp[x][y] = 0;
+            }
+        }
+    }
+
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            board[x][y] = 0;
+        }
+    }
+
+    for(let y = 0; y < 4 ; y++)
+    {
+        var a = 0;
+        for(let x = 0; x < 4; x++)
+        { 
+            if(temp[x][y] !=0){
+                if(board[a][y]==0){
+                    board[a][y] = temp[x][y];  
+                }
+                a++;
+            }
+        }
+    }
+
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+           if(board[x][y]!=check[x][y])
+           {
+            move = true;
+           }
+        }
+    }
+    removeblock();
+    drawblock();
+    if(move == true)
+    {
+      newblock();  
+    }
+    }
+    
+    function keyArrowDown(){
+    console.log("Down Pressed.");
+    var move = false;
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            temp[x][y] = 0;
+            check[x][y] = board[x][y]; 
+        }
+    }
+
+    for(let y = 0; y < 4 ; y++)
+    {
+        var a = 3;
+        for(let x = 3; x > -1; x--)
+        { 
+            if(board[x][y] !=0){
+                if(temp[a][y]==0){
+                    temp[a][y] = board[x][y];  
+                }
+                a--;
+            }
+        }
+    }
+
+    for(let y = 0; y < 4 ; y++)
+    {
+        for(let x = 2; x > -1; x--)
+        { 
+            if(temp[x][y]==temp[x+1][y]){
+                temp[x+1][y] = temp[x+1][y] + temp[x][y];
+                temp[x][y] = 0;
+            }
+        }
+    }
+
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+            board[x][y] = 0;
+        }
+    }
+
+    for(let y = 0; y < 4 ; y++)
+    {
+        var a = 3;
+        for(let x = 3; x > -1; x--)
+        { 
+            if(temp[x][y] !=0){
+                if(board[a][y]==0){
+                    board[a][y] = temp[x][y];  
+                }
+                a--;
+            }
+        }
+    }
+
+
+    for(let x = 0; x < 4 ; x++)
+    {
+        for(let y = 0; y < 4; y++)
+        { 
+           if(board[x][y]!=check[x][y])
+           {
+            move = true;
+           }
+        }
+    }
+    removeblock();
+    drawblock();
+    if(move == true)
+    {
+      newblock();  
+    }
+    }
+
+    function keylog(e){
     console.log(e.key);
     switch(e.key){
         case 'ArrowRight':
@@ -198,6 +436,17 @@ function drawblock(){
                 var app = document.getElementById('app');
                 var div = document.createElement('div');
                 div.setAttribute('class','block');
+                switch (board[i][j]) {
+                    case 2:
+                        div.style.backgroundColor = 'rgb(247, 195, 208)';
+                        break;
+                    case 4:
+                        div.style.backgroundColor = 'rgb(255, 169, 41)';
+                        break;
+                    case 8:
+                        div.style.backgroundColor = 'rgb(208, 255, 0)';
+                        break;
+                }
                 div.innerText = board[i][j]+ "";
                 app.append(div);
                 div.style.top += 20+(150*i);
@@ -219,22 +468,41 @@ function newblock(){
     {
         var x = parseInt(Math.random() * 3.99);
         var y = parseInt(Math.random() * 3.99);
-
+        var rand = parseInt(Math.random() * 10);
         if(board[x][y]==0)
         {   
-            board[x][y]= 2;
+            if(rand < 7)
+            {
+                board[x][y]= 2;
+            }else{
+                board[x][y]= 4;
+            }
             break;
         }
     }
     var app = document.getElementById('app');
     var div = document.createElement('div');
     div.setAttribute('class','block');
-    div.innerText = "2";
+    if(board[x][y]==2)
+    {
+        div.innerText = "2";
+        div.style.backgroundColor = 'rgb(247, 195, 208)';
+    }
+    if(board[x][y]==4)
+    {
+        div.innerText = "4";
+        div.style.backgroundColor = 'rgb(255, 169, 41)';
+    }
     app.appendChild(div);
     div.style.top += 20+(150*x);
     div.style.left += 20+(150*y);
 }
 
+function startG()
+{
+    newblock();
+    newblock();
+}
 window.onkeydown = keylog;
     </script>
         
