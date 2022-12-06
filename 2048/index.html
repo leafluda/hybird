@@ -170,7 +170,6 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     </style>
 </head>
 <body onload="">
-    <script src="https://unpkg.com/vue@3"></script>
     
     <div id="UI">
         <button class="custom-btn btn-12" onclick="start()"><span>Click!</span><span>start</span></button>
@@ -178,7 +177,38 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     </div>
     <div id="unstart">Click Start Button</div>
     <div id="app">
-        <div class="bg" v-for="index in bgs"></div>           
+        <div class="bg"></div>
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div> 
+        <div class="bg"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>             
     </div>
     <div id="win">You Win</div>
     <div id="gameo">You Lose</div>
@@ -206,6 +236,8 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     var score = 0;
 
     var gamewin = false;
+
+    var blocks;
 
     function keyArrowRight(){
         score = score + 1;
@@ -279,12 +311,12 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
            }
         }
     }
-    removeblock();
-    drawblock();
+
     if(move == true)
     {
       newblock();  
     }
+    draw();
     }
 
     function keyArrowLeft(){
@@ -360,12 +392,11 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
            }
         }
     }
-    removeblock();
-    drawblock();
     if(move == true)
     {
       newblock();  
     }
+    draw();
     }
     
     function keyArrowUp(){
@@ -443,12 +474,12 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
            }
         }
     }
-    removeblock();
-    drawblock();
+
     if(move == true)
     {
       newblock();  
     }
+    draw();
     }
     
     function keyArrowDown(){
@@ -525,12 +556,12 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
            }
         }
     }
-    removeblock();
-    drawblock();
+
     if(move == true)
     {
       newblock();  
     }
+    draw();
     }
 
     function keylog(e){
@@ -553,74 +584,79 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             case 'n':
                 newblock();
                 break;
+            case 'd':
+                draw();
+                break;
             default:
                 break;
         }
     }
+    endG();
 }
 
-function removeblock(){
-    var app = document.getElementById('app');
-    let blocks = document.getElementsByClassName("block");
-    for (let i = 0; i<16; i++){
-        for (let i = 0; i < blocks.length; i++){
-        app.removeChild(blocks[i]);
-    }
-    }
-}
+function draw()
+{
+    blocks = document.getElementsByClassName("block");
 
-function drawblock(){
     for(let i= 0; i<4;i++)
     {
         for(let j= 0; j<4;j++)
         {
-            if(board[i][j] != 0)
-            {
-                var app = document.getElementById('app');
-                var div = document.createElement('div');
-                div.setAttribute('class','block');
-                switch (board[i][j]) {
+            blocks[(i*4)+j].innerText = board[i][j]+ "";
+            blocks[(i*4)+j].style.top += 20+(150*i);
+            blocks[(i*4)+j].style.left += 20+(150*j);
+            switch (board[i][j]) {
+                    case 0:
+                        blocks[(i*4)+j].style.display = 'none';
+                        break;
                     case 2:
-                        div.style.backgroundColor = '#FFD8D8';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
                         break;
                     case 4:
-                        div.style.backgroundColor = '#FAECC5';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
                         break;
                     case 8:
-                        div.style.backgroundColor = '#FAF4C0';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
                         break;
                     case 16:
-                        div.style.backgroundColor = '#CEFBC9';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
                         break;
                     case 32:
-                        div.style.backgroundColor = '#D4F4FA';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
                         break;
                     case 64:
-                        div.style.backgroundColor = '#DAD9FF';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
                         break;
                     case 128:
-                        div.style.backgroundColor = '#E8D9FF';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
                         break;
                     case 256:
-                        div.style.backgroundColor = '#F15F5F';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
                         break;
                     case 512:
-                        div.style.backgroundColor = '#F2CB61';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
                         break;
                     case 1024:
-                        div.style.backgroundColor = '#E5D85C';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
                         break;
                     case 2048:
-                        div.style.backgroundColor = '#86E57F';
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#86E57F';
                         break;
                 }
-                div.innerText = board[i][j]+ "";
-                app.append(div);
-                div.style.top += 20+(150*i);
-                div.style.left += 20+(150*j);
-            }
         }
     }
+
 }
 
 function start(){
@@ -637,18 +673,18 @@ function start(){
         board[i][j]=0;
         }
     }
-    removeblock();
-    drawblock();
     first();
+    draw();
+
         var app = document.getElementById('app');
         var unstart = document.getElementById('unstart');
         var win = document.getElementById('win');
         var gameo = document.getElementById('gameo');
-
         app.style.display = 'grid';
         unstart.style.display = 'none';
         win.style.display = 'none';
         gameo.style.display = 'none';
+
 }
 
 function first(){
@@ -679,14 +715,6 @@ function newblock(){
             break;
         }
     }
-    var app = document.getElementById('app');
-    var div = document.createElement('div');
-    div.setAttribute('class','block');
-    div.innerText = "2";
-    div.style.backgroundColor = '#FFD8D8';
-    app.appendChild(div);
-    div.style.top += 20+(150*x);
-    div.style.left += 20+(150*y);
 }
 
 function newblock4(){
@@ -701,14 +729,6 @@ function newblock4(){
             break;
         }
     }
-    var app = document.getElementById('app');
-    var div = document.createElement('div');
-    div.setAttribute('class','block');
-    div.innerText = "4";
-    div.style.backgroundColor = '#FAECC5';
-    app.appendChild(div);
-    div.style.top += 20+(150*x);
-    div.style.left += 20+(150*y);
 }
 
 function endG()
@@ -798,20 +818,6 @@ function endG()
 }
 window.onkeydown = keylog;
     </script>
-        
-    <script type="text/javascript">
-        const {createApp} = Vue;
-        createApp({
-            data() {
-                return {                    
-                    bgs : 16,
-                }
-            },
-            mounted(){
-                console.log("app 마운트 성공!");
-            },
-        }).mount("#app");
-
-    </script>
+    
 </body>
 </html>
