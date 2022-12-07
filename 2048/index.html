@@ -172,7 +172,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 <body onload="">
     
     <div id="UI">
-        <button class="custom-btn btn-12" onclick="start()"><span>Click!</span><span>start</span></button>
+        <button class="custom-btn btn-12" onclick="gm.start()"><span>Click!</span><span>start</span></button>
         <p id = "scoretext"></p>
     </div>
     <div id="unstart">Click Start Button</div>
@@ -239,583 +239,519 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 
     var blocks;
 
-    function keyArrowRight(){
-        score = score + 1;
-    var scoretext = document.getElementById('scoretext');
-    scoretext.innerText = score+""
-    console.log("Right Pressed.");
-    var move = false;
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            temp[x][y] = 0;
-            check[x][y] = board[x][y]; 
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        var a = 3;
-        for(let y = 3; y > -1 ; y--)
-        { 
-            if(board[x][y] !=0){
-                if(temp[x][a]==0){
-                    temp[x][a] = board[x][y];  
-                }
-                a--;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 2; y > -1; y--)
-        { 
-            if(temp[x][y]==temp[x][y+1]){
-                temp[x][y+1] = temp[x][y+1] + temp[x][y];
-                temp[x][y] = 0;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            board[x][y] = 0;
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        var a = 3;
-        for(let y = 3; y > -1 ; y--)
-        { 
-            if(temp[x][y] !=0){
-                if(board[x][a]==0){
-                    board[x][a] = temp[x][y];  
-                }
-                a--;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-           if(board[x][y]!=check[x][y])
-           {
-            move = true;
-           }
-        }
-    }
-
-    if(move == true)
-    {
-      newblock();  
-    }
-    draw();
-    }
-
-    function keyArrowLeft(){
-        score = score + 1;
-    var scoretext = document.getElementById('scoretext');
-    scoretext.innerText = score+""
-
-    console.log("Left Pressed.");
-    var move = false;
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            temp[x][y] = 0;
-            check[x][y] = board[x][y]; 
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        var a = 0;
-        for(let y = 0; y < 4; y++)
-        { 
-            if(board[x][y] !=0){
-                if(temp[x][a]==0){
-                    temp[x][a] = board[x][y];  
-                }
-                a++;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 1; y < 4; y++)
-        { 
-            if(temp[x][y]==temp[x][y-1]){
-                temp[x][y-1] = temp[x][y-1] + temp[x][y];
-                temp[x][y] = 0;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            board[x][y] = 0;
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        var a = 0;
-        for(let y = 0; y < 4; y++)
-        { 
-            if(temp[x][y] !=0){
-                if(board[x][a]==0){
-                    board[x][a] = temp[x][y];  
-                }
-                a++;
-            }
-        }
-    }
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-           if(board[x][y]!=check[x][y])
-           {
-            move = true;
-           }
-        }
-    }
-    if(move == true)
-    {
-      newblock();  
-    }
-    draw();
-    }
+    var scoretext
     
-    function keyArrowUp(){
-    score = score + 1;
-    var scoretext = document.getElementById('scoretext');
-    scoretext.innerText = score+""
+    var move;
 
-    console.log("Up Pressed.");
-    var move = false;
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            temp[x][y] = 0;
-            check[x][y] = board[x][y]; 
-        }
-    }
+    var movepx = [[0,0,0,0],
+                  [0,0,0,0],
+                  [0,0,0,0],
+                  [0,0,0,0]];
 
-    for(let y = 0; y < 4 ; y++)
-    {
-        var a = 0;
-        for(let x = 0; x < 4; x++)
-        { 
-            if(board[x][y] !=0){
-                if(temp[a][y]==0){
-                    temp[a][y] = board[x][y];  
+
+    class GameManager{
+        compute(key){
+            move = false;
+
+            for(let x = 0; x < 4 ; x++){
+                for(let y = 0; y < 4; y++){ 
+                    temp[x][y] = 0;
+                    check[x][y] = board[x][y]; 
                 }
-                a++;
             }
-        }
-    }
-
-    for(let y = 0; y < 4 ; y++)
-    {
-        for(let x = 1; x < 4; x++)
-        { 
-            if(temp[x][y]==temp[x-1][y]){
-                temp[x-1][y] = temp[x-1][y] + temp[x][y];
-                temp[x][y] = 0;
-            }
-        }
-    }
-
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            board[x][y] = 0;
-        }
-    }
-
-    for(let y = 0; y < 4 ; y++)
-    {
-        var a = 0;
-        for(let x = 0; x < 4; x++)
-        { 
-            if(temp[x][y] !=0){
-                if(board[a][y]==0){
-                    board[a][y] = temp[x][y];  
-                }
-                a++;
-            }
-        }
-    }
-
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-           if(board[x][y]!=check[x][y])
-           {
-            move = true;
-           }
-        }
-    }
-
-    if(move == true)
-    {
-      newblock();  
-    }
-    draw();
-    }
-    
-    function keyArrowDown(){
-    score = score + 1;
-    var scoretext = document.getElementById('scoretext');
-    scoretext.innerText = score+""
-    console.log("Down Pressed.");
-    var move = false;
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            temp[x][y] = 0;
-            check[x][y] = board[x][y]; 
-        }
-    }
-
-    for(let y = 0; y < 4 ; y++)
-    {
-        var a = 3;
-        for(let x = 3; x > -1; x--)
-        { 
-            if(board[x][y] !=0){
-                if(temp[a][y]==0){
-                    temp[a][y] = board[x][y];  
-                }
-                a--;
-            }
-        }
-    }
-
-    for(let y = 0; y < 4 ; y++)
-    {
-        for(let x = 2; x > -1; x--)
-        { 
-            if(temp[x][y]==temp[x+1][y]){
-                temp[x+1][y] = temp[x+1][y] + temp[x][y];
-                temp[x][y] = 0;
-            }
-        }
-    }
-
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-            board[x][y] = 0;
-        }
-    }
-
-    for(let y = 0; y < 4 ; y++)
-    {
-        var a = 3;
-        for(let x = 3; x > -1; x--)
-        { 
-            if(temp[x][y] !=0){
-                if(board[a][y]==0){
-                    board[a][y] = temp[x][y];  
-                }
-                a--;
-            }
-        }
-    }
-
-
-    for(let x = 0; x < 4 ; x++)
-    {
-        for(let y = 0; y < 4; y++)
-        { 
-           if(board[x][y]!=check[x][y])
-           {
-            move = true;
-           }
-        }
-    }
-
-    if(move == true)
-    {
-      newblock();  
-    }
-    draw();
-    }
-
-    function keylog(e){
-    console.log(e.key);
-    endG();
-    if(gamestate==true){
-        switch(e.key){
+            
+            switch (key) {
             case 'ArrowRight':
-                keyArrowRight();
+                for(let x = 0; x < 4 ; x++){
+                    var a = 3;
+                    for(let y = 3; y > -1 ; y--){ 
+                        if(board[x][y] !=0){
+                            if(temp[x][a]==0){
+                                temp[x][a] = board[x][y];  
+                            }
+                        a--;
+                        }
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 2; y > -1; y--){ 
+                        if(temp[x][y]==temp[x][y+1]){
+                            temp[x][y+1] = temp[x][y+1] + temp[x][y];
+                            temp[x][y] = 0;
+                        }
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 0; y < 4; y++){ 
+                        board[x][y] = 0;
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    var a = 3;
+                    for(let y = 3; y > -1 ; y--){ 
+                        if(temp[x][y] !=0){
+                            if(board[x][a]==0){
+                                board[x][a] = temp[x][y];  
+                            }
+                        a--;
+                        }
+                    }
+                }
                 break;
             case 'ArrowLeft':
-                keyArrowLeft();
+                for(let x = 0; x < 4 ; x++){
+                    var a = 0;
+                    for(let y = 0; y < 4; y++){ 
+                        if(board[x][y] !=0){
+                            if(temp[x][a]==0){
+                                temp[x][a] = board[x][y];  
+                            }
+                        a++;
+                        }
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 1; y < 4; y++){ 
+                        if(temp[x][y]==temp[x][y-1]){
+                            temp[x][y-1] = temp[x][y-1] + temp[x][y];
+                            temp[x][y] = 0;
+                        }
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 0; y < 4; y++){ 
+                        board[x][y] = 0;
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    var a = 0;
+                    for(let y = 0; y < 4; y++){ 
+                        if(temp[x][y] !=0){
+                            if(board[x][a]==0){
+                                board[x][a] = temp[x][y];  
+                            }
+                        a++;
+                        }
+                    }
+                }
                 break;
             case 'ArrowUp':
-                keyArrowUp();
+                for(let y = 0; y < 4 ; y++){
+                    var a = 0;
+                    for(let x = 0; x < 4; x++){ 
+                        if(board[x][y] !=0){
+                            if(temp[a][y]==0){
+                                temp[a][y] = board[x][y];  
+                            }
+                        a++;
+                        }
+                    }
+                }
+
+                for(let y = 0; y < 4 ; y++){
+                    for(let x = 1; x < 4; x++){ 
+                        if(temp[x][y]==temp[x-1][y]){
+                            temp[x-1][y] = temp[x-1][y] + temp[x][y];
+                            temp[x][y] = 0;
+                        }
+                    }
+                }
+
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 0; y < 4; y++){ 
+                    board[x][y] = 0;
+                    }
+                }
+
+                for(let y = 0; y < 4 ; y++){
+                    var a = 0;
+                    for(let x = 0; x < 4; x++){ 
+                        if(temp[x][y] !=0){
+                            if(board[a][y]==0){
+                                board[a][y] = temp[x][y];  
+                            }
+                            a++;
+                        }
+                    }
+                }
                 break;
             case 'ArrowDown':
-                keyArrowDown();
-                break;
-            case 'n':
-                newblock();
-                break;
-            case 'd':
-                draw();
-                break;
-            default:
-                break;
-        }
-    }
-    endG();
-}
-
-function draw()
-{
-    blocks = document.getElementsByClassName("block");
-
-    for(let i= 0; i<4;i++)
-    {
-        for(let j= 0; j<4;j++)
-        {
-            blocks[(i*4)+j].innerText = board[i][j]+ "";
-            blocks[(i*4)+j].style.top += 20+(150*i);
-            blocks[(i*4)+j].style.left += 20+(150*j);
-            switch (board[i][j]) {
-                    case 0:
-                        blocks[(i*4)+j].style.display = 'none';
-                        break;
-                    case 2:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
-                        break;
-                    case 4:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
-                        break;
-                    case 8:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
-                        break;
-                    case 16:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
-                        break;
-                    case 32:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
-                        break;
-                    case 64:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
-                        break;
-                    case 128:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
-                        break;
-                    case 256:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
-                        break;
-                    case 512:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
-                        break;
-                    case 1024:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
-                        break;
-                    case 2048:
-                    blocks[(i*4)+j].style.display = 'block';
-                    blocks[(i*4)+j].style.backgroundColor = '#86E57F';
-                        break;
+                for(let y = 0; y < 4 ; y++){
+                    var a = 3;
+                    for(let x = 3; x > -1; x--){ 
+                        if(board[x][y] !=0){
+                            if(temp[a][y]==0){
+                                temp[a][y] = board[x][y];  
+                            }
+                            a--;
+                        }
+                    }
                 }
-        }
-    }
 
-}
+                for(let y = 0; y < 4 ; y++){
+                    for(let x = 2; x > -1; x--){ 
+                        if(temp[x][y]==temp[x+1][y]){
+                            temp[x+1][y] = temp[x+1][y] + temp[x][y];
+                            temp[x][y] = 0;
+                        }
+                    }
+                }
 
-function start(){
-    gamestate = true;
-    gamewin = false;
-    gameover = false;
-    score = 0;
-    var scoretext = document.getElementById('scoretext');
-    scoretext.innerText = score+""
-    for(let i= 0; i<4;i++)
-    {
-        for(let j= 0; j<4;j++)
-        {
-        board[i][j]=0;
-        }
-    }
-    first();
-    draw();
+                for(let x = 0; x < 4 ; x++){
+                    for(let y = 0; y < 4; y++){ 
+                        board[x][y] = 0;
+                    }
+                }
 
-        var app = document.getElementById('app');
-        var unstart = document.getElementById('unstart');
-        var win = document.getElementById('win');
-        var gameo = document.getElementById('gameo');
-        app.style.display = 'grid';
-        unstart.style.display = 'none';
-        win.style.display = 'none';
-        gameo.style.display = 'none';
+                for(let y = 0; y < 4 ; y++){
+                    var a = 3;
+                    for(let x = 3; x > -1; x--){ 
+                        if(temp[x][y] !=0){
+                            if(board[a][y]==0){
+                                board[a][y] = temp[x][y];  
+                            }
+                            a--;
+                        }
+                    }
+                }
+                break;
+            }
 
-}
-
-function first(){
-    var rand =  parseInt(Math.random() * 2.99);
-    switch (rand) {
-        case 0:
-            newblock();
-            break;
-        case 1:
-            newblock4();
-            break;
-        case 2:
-            newblock();
-            newblock4();
-            break;
-    }
-}
-
-function newblock(){
-    while(true)
-    {
-        var x = parseInt(Math.random() * 3.99);
-        var y = parseInt(Math.random() * 3.99);
-        if(board[x][y]==0)
-        {   
+            for(let x = 0; x < 4 ; x++){
+                for(let y = 0; y < 4; y++){ 
+                    if(board[x][y]!=check[x][y]){
+                        move = true;
+                    }
+                }
+            }
             
-            board[x][y]= 2;
-            break;
+            if(move == true){
+                this.newblock(); 
+                score = score + 1;
+                scoretext = document.getElementById('scoretext');
+                scoretext.innerText = score+""
+            }
+            this.draw();
         }
-    }
-}
+    
+        endG(){   
+            var rl = false;
+            var ud = false;
 
-function newblock4(){
-    while(true)
-    {
-        var x = parseInt(Math.random() * 3.99);
-        var y = parseInt(Math.random() * 3.99);
-        if(board[x][y]==0)
-        {   
-            
-            board[x][y]= 4;
-            break;
-        }
-    }
-}
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    if(board[i][j]==2048){
+                        gamestate = false;
+                        gamewin = true;
+                        var app = document.getElementById('app');
+                        var unstart = document.getElementById('unstart');
+                        var win = document.getElementById('win');
+                        var gameo = document.getElementById('gameo');
 
-function endG()
-{   
-    var rl = false;
-    var ud = false;
+                        app.style.display = 'none';
+                        unstart.style.display = 'none';
+                        win.style.display = 'grid';
+                        gameo.style.display = 'none';
+                    }
+                }
+            }
 
-    for(let i= 0; i<4;i++)
-    {
-        for(let j= 0; j<4;j++)
-        {
-        if(board[i][j]==2048){
-        gamestate = false;
-        gamewin = true;
-        var app = document.getElementById('app');
-        var unstart = document.getElementById('unstart');
-        var win = document.getElementById('win');
-        var gameo = document.getElementById('gameo');
+            if(gamewin == false){
+                if(gameover==true){
+                    gamestate = false;
+                    var app = document.getElementById('app');
+                    var unstart = document.getElementById('unstart');
+                    var win = document.getElementById('win');
+                    var gameo = document.getElementById('gameo');
 
-        app.style.display = 'none';
-        unstart.style.display = 'none';
-        win.style.display = 'grid';
-        gameo.style.display = 'none';
-        }
-        }
-    }
-
-    if(gamewin == false){
-       
-    if(gameover==true)
-    {
-        gamestate = false;
-        var app = document.getElementById('app');
-        var unstart = document.getElementById('unstart');
-        var win = document.getElementById('win');
-        var gameo = document.getElementById('gameo');
-
-        app.style.display = 'none';
-        unstart.style.display = 'none';
-        win.style.display = 'none';
-        gameo.style.display = 'grid';
-    } 
+                    app.style.display = 'none';
+                    unstart.style.display = 'none';
+                    win.style.display = 'none';
+                    gameo.style.display = 'grid';
+                } 
         
-    for(let i= 0; i<4;i++)
-    {
-        for(let j= 0; j<3;j++)
-        {
-            if(board[i][j] == board[i][j+1])
-            {
-                rl = true;
+                for(let i= 0; i<4;i++){
+                    for(let j= 0; j<3;j++){
+                        if(board[i][j] == board[i][j+1]){
+                            rl = true;
+                        }
+                    }
+                }
+
+                for(let i= 0; i<3;i++){
+                    for(let j= 0; j<4;j++){
+                        if(board[i][j] == board[i+1][j]){
+                            ud = true;
+                        }
+                    }
+                }
+
+                for(let i= 0; i<3;i++){
+                    for(let j= 0; j<4;j++){
+                        if(board[i][j] == 0){
+                            rl = true;
+                            ud = true;
+                        }
+                    }
+                }
+
+                if(rl==false){
+                    if(ud==false){
+                        gameover = true;
+                    }
+                } 
+
             }
         }
-    }
 
-    for(let i= 0; i<3;i++)
-    {
-        for(let j= 0; j<4;j++)
-        {
-            if(board[i][j] == board[i+1][j])
-            {
-                ud = true;
+        draw(){
+            blocks = document.getElementsByClassName("block");
+
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    blocks[(i*4)+j].innerText = board[i][j]+ "";
+                    blocks[(i*4)+j].style.top += 20+(150*i);
+                    blocks[(i*4)+j].style.left += 20+(150*j);
+                        switch (board[i][j]) {
+                            case 0:
+                                blocks[(i*4)+j].style.display = 'none';
+                            break;
+                            case 2:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
+                            break;
+                            case 4:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
+                            break;
+                            case 8:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
+                            break;
+                            case 16:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
+                            break;
+                            case 32:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
+                            break;
+                            case 64:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
+                            break;
+                            case 128:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
+                            break;
+                            case 256:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
+                            break;
+                            case 512:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
+                            break;
+                            case 1024:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
+                            break;
+                            case 2048:
+                            blocks[(i*4)+j].style.display = 'block';
+                            blocks[(i*4)+j].style.backgroundColor = '#86E57F';
+                            break;
+                        }
+                }
+            }
+
+        }
+
+        newblock(){
+            while(true){
+                var x = parseInt(Math.random() * 3.99);
+                var y = parseInt(Math.random() * 3.99);
+                if(board[x][y]==0){   
+                    board[x][y]= 2;
+                    break;
+                }
             }
         }
-    }
 
-    for(let i= 0; i<3;i++)
-    {
-        for(let j= 0; j<4;j++)
-        {
-            if(board[i][j] == 0)
-            {
-                rl = true;
-                ud = true;
+        newblock4(){
+            while(true){
+                var x = parseInt(Math.random() * 3.99);
+                var y = parseInt(Math.random() * 3.99);
+                if(board[x][y]==0){   
+                    board[x][y]= 4;
+                    break;
+                }
             }
         }
-    }
 
-    if(rl==false)
-    {
-        if(ud==false)
-        {
-            gameover = true;
+        first(){
+            var rand =  parseInt(Math.random() * 2.99);
+            switch (rand) {
+                case 0:
+                    this.newblock();
+                break;
+                case 1:
+                    this.newblock4();
+                break;
+                case 2:
+                    this.newblock();
+                    this.newblock4();
+                break;
+            }
         }
-    } 
+
+        start(){
+            gamestate = true;
+            gamewin = false;
+            gameover = false;
+            score = 0;
+            var scoretext = document.getElementById('scoretext');
+            scoretext.innerText = score+""
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    board[i][j]=0;
+                }
+            }
+            this.first();
+            this.draw();
+
+            var app = document.getElementById('app');
+            var unstart = document.getElementById('unstart');
+            var win = document.getElementById('win');
+            var gameo = document.getElementById('gameo');
+
+            app.style.display = 'grid';
+            unstart.style.display = 'none';
+            win.style.display = 'none';
+            gameo.style.display = 'none';
+        }
+        
+        LeftAnimation(){
+            blocks = document.getElementsByClassName("block");
+
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    temp[i][j] = 0;
+                    blocks[(i*4)+j].innerText = check[i][j]+ "";
+                    blocks[(i*4)+j].style.top += 20+(150*i);
+                    blocks[(i*4)+j].style.left += 20+(150*j);
+                        switch (check[i][j]) {
+                            case 0:
+                                blocks[(i*4)+j].style.display = 'none';
+                            break;
+                            case 2:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
+                            break;
+                            case 4:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
+                            break;
+                            case 8:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
+                            break;
+                            case 16:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
+                            break;
+                            case 32:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
+                            break;
+                            case 64:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
+                            break;
+                            case 128:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
+                            break;
+                            case 256:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
+                            break;
+                            case 512:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
+                            break;
+                            case 1024:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
+                            break;
+                            case 2048:
+                                blocks[(i*4)+j].style.display = 'block';
+                                blocks[(i*4)+j].style.backgroundColor = '#86E57F';
+                            break;
+                        }            
+                }
+            }
+            for(let x = 0; x < 4 ; x++){
+                var a = 0;
+                for(let y = 0; y < 4; y++){ 
+                    if(check[x][y] !=0){
+                        if(temp[x][a]==0){
+                            temp[x][a] = check[x][y];
+                            movepx[x][y] = a-y;
+                        }
+                        a++;
+                    }
+                }
+            }
+
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    check
+                }
+            }
+
+        }
+
+        rightAnimation(){
+
+        }
+
+        upAnimation(){
+
+        }
+
+        downAnimation(){
+
+        }
+
+        drawAnimation(){
+            
+        }
+    
+    }
+
+    function openfile(){
 
     }
-}
+
+    var gm = new GameManager();
+
+    function keylog(e){
+            console.log(e.key);
+            gm.endG();
+            if(gamestate==true){
+                gm.compute(e.key);
+            }
+            gm.endG();
+    }
+
+
+
 window.onkeydown = keylog;
     </script>
     
