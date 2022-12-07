@@ -172,7 +172,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 <body onload="openfile()">
     
     <div id="UI">
-        <button class="custom-btn btn-12" onclick="gm.start()"><span>Click!</span><span>start</span></button>
+        <button class="custom-btn btn-12" onclick="start()"><span>Click!</span><span>start</span></button>
         <p id = "scoretext"></p>
     </div>
     <div id="unstart">Click Start Button</div>
@@ -212,7 +212,11 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                  [0,0,0,0],
                  [0,0,0,0],
                  [0,0,0,0]];
-
+    
+    var undoboard = [[0,0,0,0],
+                     [0,0,0,0],
+                     [0,0,0,0],
+                     [0,0,0,0]];
     var gamestate = true;
 
     var gameover = false;
@@ -223,7 +227,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 
     var blocks;
 
-    var scoretext
+    var scoretext;
     
     var move;
 
@@ -237,27 +241,48 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                   [0,0,0,0],
                   [0,0,0,0]];
     
+    var moveComplete = [[0,0,0,0],
+                      [0,0,0,0],
+                      [0,0,0,0],
+                      [0,0,0,0]];
+
+
+    var moveAfter = [[0,0,0,0],
+                     [0,0,0,0],
+                     [0,0,0,0],
+                     [0,0,0,0]];
+    
     var intervalId;
 
-    var onoff = true;
+    var onoff = false;
 
-    class GameManager{
-        compute(key){
+        function compute(key){
             move = false;
 
             for(let x = 0; x < 4 ; x++){
-                for(let y = 0; y < 4; y++){ 
+                for(let y = 0; y < 4; y++){
+                    undoboard[x][y] = check[x][y];
                     temp[x][y] = 0;
-                    check[x][y] = board[x][y]; 
+                    check[x][y] = board[x][y];
+                    moveAfter[x][y] = 0;
                 }
             }
             
             switch (key) {
             case 'l' :
-            this.animationload();
+            animationload();
+            break;
+            case 'n' :
+            newblock();
+            break;
+            case 'd' :
+            draw();
+            break;
+            case 'u' :
+            undo();
             break;
             case 'r' : 
-            this.resetpx();
+            resetpx();
             break;
             case 'ArrowRight':
                 for(let x = 0; x < 4 ; x++){
@@ -265,7 +290,8 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     for(let y = 3; y > -1 ; y--){ 
                         if(board[x][y] !=0){
                             if(temp[x][a]==0){
-                                temp[x][a] = board[x][y];  
+                                temp[x][a] = board[x][y];
+                                moveAfter[x][y] = a;
                             }
                         a--;
                         }
@@ -274,13 +300,14 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 
                 for(let x = 0; x < 4 ; x++){
                     for(let y = 2; y > -1; y--){ 
-                        if(temp[x][y]==temp[x][y+1]){
+                        if(temp[x][y]!=0 && temp[x][y]==temp[x][y+1]){
                             temp[x][y+1] = temp[x][y+1] + temp[x][y];
                             temp[x][y] = 0;
+                            moveAfter[x][y] = moveAfter[x][y]+1;
                         }
                     }
                 }
-
+                console.log(moveAfter);
                 for(let x = 0; x < 4 ; x++){
                     for(let y = 0; y < 4; y++){ 
                         board[x][y] = 0;
@@ -292,12 +319,16 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     for(let y = 3; y > -1 ; y--){ 
                         if(temp[x][y] !=0){
                             if(board[x][a]==0){
-                                board[x][a] = temp[x][y];  
+                                board[x][a] = temp[x][y];
+                                moveAfter[x][y] = a;  
                             }
                         a--;
                         }
                     }
                 }
+                console.log(moveAfter);
+                resetpx();
+                intervalId = setInterval(rightAnimation,1);
                 break;
             case 'ArrowLeft':
                 for(let x = 0; x < 4 ; x++){
@@ -305,7 +336,8 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     for(let y = 0; y < 4; y++){ 
                         if(board[x][y] !=0){
                             if(temp[x][a]==0){
-                                temp[x][a] = board[x][y];  
+                                temp[x][a] = board[x][y]; 
+                                moveAfter[x][y] = a;
                             }
                         a++;
                         }
@@ -313,10 +345,11 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 }
 
                 for(let x = 0; x < 4 ; x++){
-                    for(let y = 1; y < 4; y++){ 
-                        if(temp[x][y]==temp[x][y-1]){
+                    for(let y = 1; y < 4; y++){
+                            if(temp[x][y]!=0 && temp[x][y]==temp[x][y-1]){
                             temp[x][y-1] = temp[x][y-1] + temp[x][y];
                             temp[x][y] = 0;
+                            moveAfter[x][y] = moveAfter[x][y]-1;
                         }
                     }
                 }
@@ -332,12 +365,15 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     for(let y = 0; y < 4; y++){ 
                         if(temp[x][y] !=0){
                             if(board[x][a]==0){
-                                board[x][a] = temp[x][y];  
+                                board[x][a] = temp[x][y];
+                                moveAfter[x][y] = a;  
                             }
                         a++;
                         }
                     }
                 }
+                resetpx();
+                intervalId = setInterval(LeftAnimation,1);
                 break;
             case 'ArrowUp':
                 for(let y = 0; y < 4 ; y++){
@@ -421,24 +457,9 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 break;
             }
 
-            for(let x = 0; x < 4 ; x++){
-                for(let y = 0; y < 4; y++){ 
-                    if(board[x][y]!=check[x][y]){
-                        move = true;
-                    }
-                }
-            }
-            
-            if(move == true){
-                this.newblock(); 
-                score = score + 1;
-                scoretext = document.getElementById('scoretext');
-                scoretext.innerText = score+""
-            }
-            this.draw();
         }
     
-        endG(){   
+        function endG(){   
             var rl = false;
             var ud = false;
 
@@ -508,7 +529,68 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             }
         }
 
-        draw(){
+        function undo(){
+            blocks = document.getElementsByClassName("block");
+
+                for(let i= 0; i<4;i++){
+                    for(let j= 0; j<4;j++){
+                         blocks[(i*4)+j].innerText = undoboard[i][j]+ "";
+                         board[i][j]=undoboard[i][j];
+                        blocks[(i*4)+j].style.top = 20+(150*i);
+                            blocks[(i*4)+j].style.left = 20+(150*j);
+            switch (undoboard[i][j]) {
+                case 0:
+                    blocks[(i*4)+j].style.display = 'none';
+                break;
+                case 2:
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
+                break;
+                case 4:
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
+                break;
+                case 8:
+                    blocks[(i*4)+j].style.display = 'block';
+                    blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
+                break;
+                case 16:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
+                break;
+                case 32:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
+                break;
+                case 64:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
+                break;
+                case 128:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
+                break;
+                case 256:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
+                break;
+                case 512:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
+                break;
+                case 1024:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
+                break;
+                case 2048:
+                blocks[(i*4)+j].style.display = 'block';
+                blocks[(i*4)+j].style.backgroundColor = '#86E57F';
+                break;
+            }
+    }
+}
+        }
+        function draw(){
             blocks = document.getElementsByClassName("block");
 
             for(let i= 0; i<4;i++){
@@ -567,10 +649,26 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                         }
                 }
             }
-
         }
 
-        newblock(){
+        function checkmove(){
+            for(let x = 0; x < 4 ; x++){
+                for(let y = 0; y < 4; y++){ 
+                    if(board[x][y]!=check[x][y]){
+                        move = true;
+                    }
+                }
+            }
+            
+            if(move == true){
+                newblock(); 
+                score = score + 1;
+                scoretext = document.getElementById('scoretext');
+                scoretext.innerText = score+""
+            }
+        }
+
+        function newblock(){
             while(true){
                 var x = parseInt(Math.random() * 3.99);
                 var y = parseInt(Math.random() * 3.99);
@@ -581,7 +679,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             }
         }
 
-        newblock4(){
+        function newblock4(){
             while(true){
                 var x = parseInt(Math.random() * 3.99);
                 var y = parseInt(Math.random() * 3.99);
@@ -592,23 +690,23 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             }
         }
 
-        first(){
+        function first(){
             var rand =  parseInt(Math.random() * 2.99);
             switch (rand) {
                 case 0:
-                    this.newblock();
+                    newblock();
                 break;
                 case 1:
-                    this.newblock4();
+                    newblock4();
                 break;
                 case 2:
-                    this.newblock();
-                    this.newblock4();
+                    newblock();
+                    newblock4();
                 break;
             }
         }
 
-        start(){
+        function start(){
             gamestate = true;
             gamewin = false;
             gameover = false;
@@ -620,8 +718,8 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     board[i][j]=0;
                 }
             }
-            this.first();
-            this.draw();
+            first();
+            draw();
 
             var app = document.getElementById('app');
             var unstart = document.getElementById('unstart');
@@ -634,59 +732,103 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             gameo.style.display = 'none';
         }
         
-        resetpx(){
+        function resetpx(){
             for(let i= 0; i<4;i++){
                 for(let j= 0; j<4;j++){
                     moveTpx[i][j] = 20+(150*i);
                     moveLpx[i][j] = 20+(150*j);
+                    temp[i][j] = 0;
+                    moveComplete[i][j] = 0;
+                    console.log(moveTpx[i][j]);
+                    console.log(moveLpx[i][j]);
+                    console.log(moveAfter[i][j]);
                 }
             }
+            console.log(moveTpx);
+            console.log(moveLpx);
+            console.log(moveAfter);
         }
 
-        animationload(){
-            onoff = true;
-            while(onoff){
-                setTimeout(this.LeftAnimation, 1);     
-            }
-        }
-
-        LeftAnimation(){
+        function LeftAnimation(){
             blocks = document.getElementsByClassName("block");
-            console.log("이동중");
+            
+            var endani = 0;
+
             for(let i= 0; i<4;i++){
                 for(let j= 0; j<4;j++){
-                    if(board[i][j]!=0){
-                    moveLpx[i][j] = moveLpx[i][j]-1;
-                    blocks[(i*4)+j].style.left = moveLpx[i][j];
-                    console.log("이동중");
-                        if(moveLpx[i][j]<20){
-                            onoff = false;
-                        }
-                    }
+                    moveComplete[i][j] = 20+(150*moveAfter[i][j]);
                 }
             }
+
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    if(check[i][j]!=0){
+                        if(moveLpx[i][j]>=(moveComplete[i][j]+1)){
+                            moveLpx[i][j] = moveLpx[i][j]-10;
+                            blocks[(i*4)+j].style.left = moveLpx[i][j];
+                            console.log("이동중");
+                        }else{
+                            temp[i][j] = 1;
+                        }  
+                    }else{
+                        temp[i][j] = 1;
+                    }
+                    endani = endani + temp[i][j];
+                }
+            }
+            if(endani==16){
+                clearInterval(intervalId);
+                console.log("끝");
+                checkmove();
+                draw();
+            }
+        }
+
+        function rightAnimation(){
+            blocks = document.getElementsByClassName("block");
             
-        }
-
-        rightAnimation(){
-
-        }
-
-        upAnimation(){
-
-        }
-
-        downAnimation(){
-
-        }
-
-        drawAnimation(){
+            var endani = 0;
             
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    moveComplete[i][j] = 20+(150*(moveAfter[i][j]))
+                }
+            }
+
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    if(check[i][j]!=0){
+                        if(moveLpx[i][j]<=(moveComplete[i][j]-1)){
+                            moveLpx[i][j] = moveLpx[i][j]+10;
+                            blocks[(i*4)+j].style.left = moveLpx[i][j];
+                            console.log("이동중");
+                        }else{
+                            temp[i][j] = 1;
+                        }  
+                    }else{
+                        temp[i][j] = 1;
+                    }
+                    endani = endani + temp[i][j];
+                }
+            }
+            if(endani==16){
+                clearInterval(intervalId);
+                console.log("끝");
+                checkmove();
+                draw();
+            }
+        }
+
+        function upAnimation(){
+
+        }
+
+        function downAnimation(){
+
         }
     
-    }
 
-    function openfile(){
+    function openfile(){ // Q.1 Memory Pool을 만들어서 객체를 재활용할 수 있도록 로직을 개선하시오 
     for(let i= 0; i<4;i++){
             for(let j= 0; j<4;j++){
                 var app = document.getElementById('app');
@@ -699,20 +841,26 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
         blocks = document.getElementsByClassName("block");
     }
 
-    var gm = new GameManager();
-
-    function keylog(e){
-            console.log(e.key);
-            gm.endG();
+    function keydown(e){
+            if(onoff==false){
+                console.log(e.key);
+            endG();
             if(gamestate==true){
-                gm.compute(e.key);
+                compute(e.key);
             }
-            gm.endG();
-    }
+            endG();
+            onoff = true;
+            }
+        }
+
+    function keyup(){
+            onoff=false;
+        }
 
 
 
-window.onkeydown = keylog;
+window.onkeydown = keydown;
+window.onkeyup = keyup;
     </script>
     
 </body>
