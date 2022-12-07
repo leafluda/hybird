@@ -169,7 +169,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
 }
     </style>
 </head>
-<body onload="">
+<body onload="openfile()">
     
     <div id="UI">
         <button class="custom-btn btn-12" onclick="gm.start()"><span>Click!</span><span>start</span></button>
@@ -192,23 +192,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
         <div class="bg"></div> 
         <div class="bg"></div> 
         <div class="bg"></div> 
-        <div class="bg"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>             
+        <div class="bg"></div> 
     </div>
     <div id="win">You Win</div>
     <div id="gameo">You Lose</div>
@@ -243,11 +227,19 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     
     var move;
 
-    var movepx = [[0,0,0,0],
+    var moveLpx = [[0,0,0,0],
                   [0,0,0,0],
                   [0,0,0,0],
                   [0,0,0,0]];
 
+    var moveTpx = [[0,0,0,0],
+                  [0,0,0,0],
+                  [0,0,0,0],
+                  [0,0,0,0]];
+    
+    var intervalId;
+
+    var onoff = true;
 
     class GameManager{
         compute(key){
@@ -261,6 +253,12 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             }
             
             switch (key) {
+            case 'l' :
+            this.animationload();
+            break;
+            case 'r' : 
+            this.resetpx();
+            break;
             case 'ArrowRight':
                 for(let x = 0; x < 4 ; x++){
                     var a = 3;
@@ -516,8 +514,8 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             for(let i= 0; i<4;i++){
                 for(let j= 0; j<4;j++){
                     blocks[(i*4)+j].innerText = board[i][j]+ "";
-                    blocks[(i*4)+j].style.top += 20+(150*i);
-                    blocks[(i*4)+j].style.left += 20+(150*j);
+                    blocks[(i*4)+j].style.top = 20+(150*i);
+                    blocks[(i*4)+j].style.left = 20+(150*j);
                         switch (board[i][j]) {
                             case 0:
                                 blocks[(i*4)+j].style.display = 'none';
@@ -636,85 +634,38 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             gameo.style.display = 'none';
         }
         
-        LeftAnimation(){
-            blocks = document.getElementsByClassName("block");
-
+        resetpx(){
             for(let i= 0; i<4;i++){
                 for(let j= 0; j<4;j++){
-                    temp[i][j] = 0;
-                    blocks[(i*4)+j].innerText = check[i][j]+ "";
-                    blocks[(i*4)+j].style.top += 20+(150*i);
-                    blocks[(i*4)+j].style.left += 20+(150*j);
-                        switch (check[i][j]) {
-                            case 0:
-                                blocks[(i*4)+j].style.display = 'none';
-                            break;
-                            case 2:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
-                            break;
-                            case 4:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
-                            break;
-                            case 8:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
-                            break;
-                            case 16:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
-                            break;
-                            case 32:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
-                            break;
-                            case 64:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
-                            break;
-                            case 128:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
-                            break;
-                            case 256:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
-                            break;
-                            case 512:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
-                            break;
-                            case 1024:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
-                            break;
-                            case 2048:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#86E57F';
-                            break;
-                        }            
+                    moveTpx[i][j] = 20+(150*i);
+                    moveLpx[i][j] = 20+(150*j);
                 }
             }
-            for(let x = 0; x < 4 ; x++){
-                var a = 0;
-                for(let y = 0; y < 4; y++){ 
-                    if(check[x][y] !=0){
-                        if(temp[x][a]==0){
-                            temp[x][a] = check[x][y];
-                            movepx[x][y] = a-y;
+        }
+
+        animationload(){
+            onoff = true;
+            while(onoff){
+                setTimeout(this.LeftAnimation, 1);     
+            }
+        }
+
+        LeftAnimation(){
+            blocks = document.getElementsByClassName("block");
+            console.log("이동중");
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    if(board[i][j]!=0){
+                    moveLpx[i][j] = moveLpx[i][j]-1;
+                    blocks[(i*4)+j].style.left = moveLpx[i][j];
+                    console.log("이동중");
+                        if(moveLpx[i][j]<20){
+                            onoff = false;
                         }
-                        a++;
                     }
                 }
             }
-
-            for(let i= 0; i<4;i++){
-                for(let j= 0; j<4;j++){
-                    check
-                }
-            }
-
+            
         }
 
         rightAnimation(){
@@ -736,7 +687,16 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     }
 
     function openfile(){
-
+    for(let i= 0; i<4;i++){
+            for(let j= 0; j<4;j++){
+                var app = document.getElementById('app');
+                var div = document.createElement('div');
+                div.className = 'block';
+                app.appendChild(div);
+                
+            }
+        }
+        blocks = document.getElementsByClassName("block");
     }
 
     var gm = new GameManager();
