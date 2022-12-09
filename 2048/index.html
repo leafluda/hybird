@@ -12,7 +12,10 @@
     position: relative;
     width: 590px;       
     height: 590px;
-    background-color: beige;
+    background: #AA076B;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
     display: none;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -28,10 +31,15 @@
     position: relative;
     width: 590px;       
     height: 590px;
-    background-color: beige; 
+    background: #43c6ac; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #43c6ac, #f8ffae); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #43c6ac, #f8ffae); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     grid-gap: 10px;
     padding : 10px;  
-    border-radius: 20;      
+    border-radius: 20;
+    font-size: 70;
+    line-height : 500px;
+    text-align: center;
 }
 
 #win{
@@ -44,8 +52,13 @@
     height: 590px;
     grid-gap: 10px;
     padding : 10px;  
-    background-color: beige;   
-    border-radius: 20;      
+    background: #fceabb;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #f8b500, #fceabb);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #f8b500, #fceabb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 20;
+    font-size: 70;
+    line-height : 500px;
+    text-align: center;      
 }
 
 #gameo{
@@ -57,26 +70,49 @@
     width: 590px;       
     height: 590px;
     grid-gap: 10px;
-    padding : 10px;  
-    background-color: beige;   
-    border-radius: 20;      
+    padding : 10px;
+    color : #ffffff;
+    background: #000000;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #434343, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #434343, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 20;
+    font-size: 70;
+    line-height : 500px;
+    text-align: center;   
 }
 
 #UI{
-    top: 10%;
+    top: 20%;
     left: 50%;
     transform: translate(-50%,-50%);
     position: relative;
     width: 590px;
     height: 100px;
-    background-color: beige;
+    background: #43c6ac; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #43c6ac, #f8ffae); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #43c6ac, #f8ffae); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    grid-gap: 10px;
     grid-gap: 10px;
     padding : 10px;     
     border-radius: 20; 
 }
 
+#scoretext{
+    left: -45%;
+    position: relative;
+    font-size: 30px;
+}
+
+#scoreboard{
+    left: -55%;
+    position: relative;
+    font-size: 30px;
+}
+
 .bg{            
-    background-color: burlywood;
+    background: #43c6ac; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #43c6ac, #f8ffae); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #43c6ac, #f8ffae); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     text-align: center;   
     line-height: 1.8;
     font-size: 70;
@@ -91,89 +127,53 @@
     width: 120;
     height: 120;
     background-color: rgb(234, 234, 234);
-    text-align: center;            
+    text-align: center;
+    font-size: 70;            
     line-height: 1.6;
-    font-size: 70;
     font-family: cursive;
     border-radius: 20;
 }
 
-.btn-12{
-  position: relative;
-  top: 30%;
-  left: 40%;
-  border:none;
-  box-shadow: none;
-  width: 130px;
-  height: 40px;
-  line-height: 42px;
-  -webkit-perspective: 230px;
-  perspective: 230px;
+.wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn-12 span {
-  background: rgb(0,172,238);
-background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
-  display: block;
-  position: absolute;
-  width: 130px;
-  height: 40px;
-  box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-   7px 7px 20px 0px rgba(0,0,0,.1),
-   4px 4px 5px 0px rgba(0,0,0,.1);
-  border-radius: 5px;
-  margin:0;
-  text-align: center;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-transition: all .3s;
-  transition: all .3s;
-}
-.btn-12 span:nth-child(1) {
-  box-shadow:
-   -7px -7px 20px 0px #fff9,
-   -4px -4px 5px 0px #fff9,
-   7px 7px 20px 0px #0002,
-   4px 4px 5px 0px #0001;
-  -webkit-transform: rotateX(90deg);
-  -moz-transform: rotateX(90deg);
-  transform: rotateX(90deg);
-  -webkit-transform-origin: 50% 50% -20px;
-  -moz-transform-origin: 50% 50% -20px;
-  transform-origin: 50% 50% -20px;
-}
-.btn-12 span:nth-child(2) {
-  -webkit-transform: rotateX(0deg);
-  -moz-transform: rotateX(0deg);
-  transform: rotateX(0deg);
-  -webkit-transform-origin: 50% 50% -20px;
-  -moz-transform-origin: 50% 50% -20px;
-  transform-origin: 50% 50% -20px;
-}
-.btn-12:hover span:nth-child(1) {
-  box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-   7px 7px 20px 0px rgba(0,0,0,.1),
-   4px 4px 5px 0px rgba(0,0,0,.1);
-  -webkit-transform: rotateX(0deg);
-  -moz-transform: rotateX(0deg);
-  transform: rotateX(0deg);
-}
-.btn-12:hover span:nth-child(2) {
-  box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-   7px 7px 20px 0px rgba(0,0,0,.1),
-   4px 4px 5px 0px rgba(0,0,0,.1);
- color: transparent;
-  -webkit-transform: rotateX(-90deg);
-  -moz-transform: rotateX(-90deg);
-  transform: rotateX(-90deg);
+
+.button {
+  width: 140px;
+  height: 45px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  }
+
+.button:hover {
+  background-color: #2e3ae5;
+  box-shadow: 0px 15px 20px rgba(46, 49, 229, 0.397);
+  color: #fff;
+  transform: translateY(-7px);
 }
     </style>
 </head>
 <body onload="openfile()">
     
-    <div id="UI">
-        <button class="custom-btn btn-12" onclick="start()"><span>Click!</span><span>start</span></button>  <!-- 스타트 버튼 -->
-        <p id = "scoretext"></p>                                                                            <!-- 스코어 -->
+    <div id="UI">                                                                                           <!-- UI -->
+        <div class="wrap">
+            <button class="button" onclick="start()">Start</button> <!-- 스타트 버튼 -->
+            <p id = "scoreboard">score<p id = "scoretext"></p> </p>       <!-- 스코어 -->                                                      
+          </div>                                                                                                                                                               
     </div>
     <div id="unstart">Click Start Button</div>                                                              <!-- 게임시작전 화면 -->
     <div id="app">                                                                                          <!-- 게임화면 -->
@@ -257,8 +257,14 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                       [0,0,0,0],
                       [0,0,0,0]];
 
-    var intervalId; // 애니메이션은 setinterval해 반복하기 위한 변수
+    var scaleblock = [[0,0,0,0], // 블럭의 배열상 도착할 위치를 저장하먀 커맨드에 사용되는 배열
+                      [0,0,0,0],
+                      [0,0,0,0],
+                      [0,0,0,0]];
 
+    var intervalId; // 애니메이션은 setinterval해 반복하기 위한 변수
+    
+    
     var onoff = false; // 커맨드를 동시입력해 오류가 발생하는걸 막기위한 변수
 
         function compute(key){ // Q.2 이동 연산 커맨드 및, 키 커맨드
@@ -277,6 +283,15 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             switch (key) { 
             case 'n' : 
             newblock();
+            break;
+            case 'c' : 
+            board = [[2,4,2,4],
+                     [4,2,4,2],
+                     [2,4,2,4],
+                     [4,2,4,2]];
+            break;
+            case 'w' : 
+            board[0][0] = 2048;
             break;
             case 'b' : 
             debugboard();
@@ -749,7 +764,15 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 break;
             }
         }
-    
+
+        function boardcheck(){
+            for(let x = 0; x < 4 ; x++){
+                for(let y = 0; y < 4; y++){
+                    check[x][y] = board[x][y];
+                }
+            }
+        }
+
         function endG(){  // Q.2 게임이 끝나는지(2048완성 or 더이상 이동할 수 없는경우)를 체크해 끝나는경우에 맞는 화면 출력하는 커맨드
             var rl = false;
             var ud = false;
@@ -881,9 +904,9 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
     }
 }
         }
+        
         function draw(){ // Q.2 이동 후, 또는 새로운 숫지2블럭이 배열에 생성되면, div의 style을 조정해 화면에 출력 하는 커맨드
             blocks = document.getElementsByClassName("block");
-
             for(let i= 0; i<4;i++){
                 for(let j= 0; j<4;j++){
                     blocks[(i*4)+j].innerText = board[i][j]+ "";
@@ -915,7 +938,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                             break;
                             case 64:
                             blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
+                            blocks[(i*4)+j].style.backgroundColor = '#A5B2FF';
                             break;
                             case 128:
                             blocks[(i*4)+j].style.display = 'block';
@@ -940,6 +963,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                         }
                 }
             }
+            onoff=false;
         }
 
         function drawtemp(){
@@ -1029,7 +1053,6 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     break;
                 }
             }
-            draw();
         }
 
         function newblock4(){ //Q.2 게임 시작시, 숫자4블럭이 생성되야할 경우 생성해주는 커맨드
@@ -1074,6 +1097,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             first();
             draw();
 
+
             var app = document.getElementById('app');
             var unstart = document.getElementById('unstart');
             var win = document.getElementById('win');
@@ -1099,6 +1123,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                     moveLpx[i][j] = 20+(150*j);
                     temp[i][j] = 0;
                     moveComplete[i][j] = 0;
+                    scaleblock[i][j] = 0;
                 }
             }
         }
@@ -1119,7 +1144,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 for(let j= 0; j<4;j++){
                     if(check[i][j]!=0){
                         if(moveLpx[i][j]>=(moveComplete[i][j]+1)){
-                            moveLpx[i][j] = moveLpx[i][j]-5;
+                            moveLpx[i][j] = moveLpx[i][j]-10;
                             blocks[(i*4)+j].style.left = moveLpx[i][j];
                             console.log("이동중");
                         }else{
@@ -1155,7 +1180,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 for(let j= 0; j<4;j++){
                     if(check[i][j]!=0){
                         if(moveLpx[i][j]<=(moveComplete[i][j]-1)){
-                            moveLpx[i][j] = moveLpx[i][j]+5;
+                            moveLpx[i][j] = moveLpx[i][j]+10;
                             blocks[(i*4)+j].style.left = moveLpx[i][j];
                             console.log("이동중");
                         }else{
@@ -1191,7 +1216,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 for(let i= 0; i<4;i++){
                     if(check[i][j]!=0){
                         if(moveTpx[i][j]>=(moveComplete[i][j]+1)){
-                            moveTpx[i][j] = moveTpx[i][j]-5;
+                            moveTpx[i][j] = moveTpx[i][j]-10;
                             blocks[(i*4)+j].style.top = moveTpx[i][j];
                             console.log("이동중");
                         }else{
@@ -1227,7 +1252,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
                 for(let i= 0; i<4;i++){
                     if(check[i][j]!=0){
                         if(moveTpx[i][j]<=(moveComplete[i][j]-1)){
-                            moveTpx[i][j] = moveTpx[i][j]+5;
+                            moveTpx[i][j] = moveTpx[i][j]+10;
                             blocks[(i*4)+j].style.top = moveTpx[i][j];
                             console.log("이동중");
                         }else{
@@ -1248,7 +1273,28 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
         }
         
         function drawAnimation(){
-
+            var endani = 0;
+            for(let x = 0; x < 4 ; x++){
+                for(let y = 0; y < 4; y++){
+                    if(check[x][y]!=board[x][y]){
+                        if(scaleblock[i][j]<119){
+                            console.log("시발");
+                            blocks[(x*4)+y].style.width = scaleblock[i][j] + 5;
+                            blocks[(x*4)+y].style.heigth = scaleblock[i][j] + 5;
+                            scaleblock[i][j] = scaleblock[i][j] + 5   
+                        }else{
+                            temp[i][j] = 1;
+                        }          
+                    }else{
+                        temp[i][j] = 1;
+                    }
+                }
+            }
+            if(endani==16){
+                clearInterval(intervalId);
+                console.log("끝");
+                draw();
+            }
         }
     
     function openfile(){ // Q.1 & Q.2 html파일 실행시 class = 'block' div를 16개 생성해 blocks배열에 넣어주고, id = 'app'의 div에 추가해주는 커맨드. 이후 blocks 배열로 사용할 div를 참조하고 더이상 id = 'block' div를 생성하지 않는다. 사용하지 않는 div는 style none해준다
@@ -1280,7 +1326,7 @@ background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
             onoff=false;
         }
 
-window.onkeydown = keydown;
+window.onkeydown = keydown; 
 window.onkeyup = keyup;
 
     </script>
