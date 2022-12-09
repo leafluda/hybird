@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048</title>
     <style>
-        #app{
+#app{
     top: 40%;
     left: 50%;
     transform: translate(-50%,-50%);
@@ -13,9 +13,8 @@
     width: 590px;       
     height: 590px;
     background: #AA076B;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+    background: -webkit-linear-gradient(to right, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     display: none;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -98,15 +97,19 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
 }
 
 #scoretext{
-    left: -45%;
+    left: 13%;
     position: relative;
     font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
 }
 
 #scoreboard{
-    left: -55%;
+    left: 5%;
     position: relative;
     font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
 }
 
 .bg{            
@@ -157,7 +160,8 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
   transition: all 0.3s ease 0s;
   cursor: pointer;
   outline: none;
-  }
+  margin: 10px;
+}
 
 .button:hover {
   background-color: #2e3ae5;
@@ -172,6 +176,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
     <div id="UI">                                                                                           <!-- UI -->
         <div class="wrap">
             <button class="button" onclick="start()">Start</button> <!-- 스타트 버튼 -->
+            <button class="button" onclick="undo()">undo</button> <!-- 스타트 버튼 -->
             <p id = "scoreboard">score<p id = "scoretext"></p> </p>       <!-- 스코어 -->                                                      
           </div>                                                                                                                                                               
     </div>
@@ -213,7 +218,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                  [0,0,0,0],
                  [0,0,0,0]];
     
-    var undoboard = [[0,0,0,0],
+    var undoboard = [[0,0,0,0], // 뒤로가기 기능을 사용할 수 있게 이전보드를 저장해주는 배열
                      [0,0,0,0],
                      [0,0,0,0],
                      [0,0,0,0]];
@@ -257,13 +262,17 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                       [0,0,0,0],
                       [0,0,0,0]];
 
-    var scaleblock = [[0,0,0,0], // 블럭의 배열상 도착할 위치를 저장하먀 커맨드에 사용되는 배열
+    var scaleblock = [[0,0,0,0], // 애니메이션으로 블럭의 크기를 바꿔줄때 사용하는 배열
+                      [0,0,0,0],
+                      [0,0,0,0],
+                      [0,0,0,0]];
+
+    var checkblock =  [[0,0,0,0], // 애니메이션으로 새로운 블럭이 생겼을때 사용하는 배열
                       [0,0,0,0],
                       [0,0,0,0],
                       [0,0,0,0]];
 
     var intervalId; // 애니메이션은 setinterval해 반복하기 위한 변수
-    
     
     var onoff = false; // 커맨드를 동시입력해 오류가 발생하는걸 막기위한 변수
 
@@ -281,29 +290,14 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             }
             
             switch (key) { 
-            case 'n' : 
-            newblock();
-            break;
-            case 'c' : 
+            case 'c' : // 게임종료 확인 디버깅키
             board = [[2,4,2,4],
                      [4,2,4,2],
                      [2,4,2,4],
                      [4,2,4,2]];
             break;
-            case 'w' : 
+            case 'w' : // 게임종료 확인 디버깅키
             board[0][0] = 2048;
-            break;
-            case 'b' : 
-            debugboard();
-            break;
-            case 'd' :
-            draw();
-            break;
-            case 'u' : 
-            undo();
-            break;
-            case 'r' : 
-            resetpx();
             break;
             case 'ArrowRight': // 오른쪽 화살표 키를 누를경우 이동가능한 블럭들이 이동하며 한번만 합쳐짐
                 for(let x = 0; x < 4 ; x++){
@@ -336,7 +330,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                         }
                     }
                 }
-                for(let x = 0; x < 4 ; x++){
+                for(let x = 0; x < 4 ; x++){ //버그 예외처리
                     for(let y = 0; y < 4; y++){ 
                         board[x][y] = 0;
                     }
@@ -445,7 +439,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                     }
                 }
 
-                for(let x = 0; x < 4 ; x++){
+                for(let x = 0; x < 4 ; x++){//버그 예외처리
                     for(let y = 0; y < 4; y++){       
                         board[x][y] = 0; 
                     }
@@ -563,7 +557,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                     }
                 }
 
-                for(let y = 0; y < 4 ; y++){
+                for(let y = 0; y < 4 ; y++){ //버그 예외처리
                     for(let x = 0; x < 4; x++){
                     board[x][y] = 0;
                     }
@@ -656,14 +650,13 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                                 }
                             }
                         }
-                    }  
-                }
-
-                if(check[0][0]==check[3][0]){
+                    }
+                    if(check[0][0]==check[3][0]){
                         if(check[1][0]==check[2][0]&&check[1][0]==0){
                             moveXAfter[3][0] = 0;
                         }
-                    } 
+                    }
+                }
 
                 for(let y = 0; y < 4 ; y++){
                     var a = 0;
@@ -686,7 +679,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                         if(board[x][y] !=0){
                             if(temp[a][y]==0){
                                 temp[a][y] = board[x][y];
-                                moveXAfter[x][y] = a;  
+                                moveXAfter[x][y] = a;
                             }
                             a--;
                         }
@@ -705,11 +698,12 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                         if(temp[x][y]==temp[x+1][y]){
                             temp[x+1][y] = temp[x+1][y] + temp[x][y];
                             temp[x][y] = 0;
+
                         }
                     }
                 }
 
-                for(let y= 0; y < 4 ; y++){
+                for(let y= 0; y < 4 ; y++){//버그 예외처리
                     for(let x = 0; x < 4; x++){ 
                         board[x][y] = 0;
                     }if(check[3][y]==check[2][y]&&check[2][y]!=0){
@@ -765,10 +759,10 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             }
         }
 
-        function boardcheck(){
+        function boardcheck(){ // Q.2 새로운 블럭이 생성되었는지 체크해줄때 사용하는커맨드
             for(let x = 0; x < 4 ; x++){
                 for(let y = 0; y < 4; y++){
-                    check[x][y] = board[x][y];
+                    checkblock[x][y] = board[x][y];
                 }
             }
         }
@@ -843,8 +837,12 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             }
         }
 
-        function undo(){
-            blocks = document.getElementsByClassName("block");
+        function undo(){ // Q.2 undo 버튼 클릭시 이전 보드로 돌아가는 커맨드
+            if(score >0){
+                score = score - 1;
+                scoretext = document.getElementById('scoretext');
+                scoretext.innerText = score+""
+                blocks = document.getElementsByClassName("block");
 
                 for(let i= 0; i<4;i++){
                     for(let j= 0; j<4;j++){
@@ -852,7 +850,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                          board[i][j]=undoboard[i][j];
                         blocks[(i*4)+j].style.top = 20+(150*i);
                             blocks[(i*4)+j].style.left = 20+(150*j);
-            switch (undoboard[i][j]) {
+                switch (undoboard[i][j]) {
                 case 0:
                     blocks[(i*4)+j].style.display = 'none';
                 break;
@@ -901,8 +899,10 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                 blocks[(i*4)+j].style.backgroundColor = '#86E57F';
                 break;
             }
-    }
-}
+                }
+            }
+            }
+            
         }
         
         function draw(){ // Q.2 이동 후, 또는 새로운 숫지2블럭이 배열에 생성되면, div의 style을 조정해 화면에 출력 하는 커맨드
@@ -966,67 +966,6 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             onoff=false;
         }
 
-        function drawtemp(){
-            blocks = document.getElementsByClassName("block");
-
-            for(let i= 0; i<4;i++){
-                for(let j= 0; j<4;j++){
-                    blocks[(i*4)+j].innerText = temp[i][j]+ "";
-                    blocks[(i*4)+j].style.top = 20+(150*i);
-                    blocks[(i*4)+j].style.left = 20+(150*j);
-                        switch (temp[i][j]) {
-                            case 0:
-                                blocks[(i*4)+j].style.display = 'none';
-                            break;
-                            case 2:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FFD8D8';
-                            break;
-                            case 4:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FAE0C8';
-                            break;
-                            case 8:
-                                blocks[(i*4)+j].style.display = 'block';
-                                blocks[(i*4)+j].style.backgroundColor = '#FAF4C0';
-                            break;
-                            case 16:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#CEFBC9';
-                            break;
-                            case 32:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#D4F4FA';
-                            break;
-                            case 64:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#DAD9FF';
-                            break;
-                            case 128:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#E8D9FF';
-                            break;
-                            case 256:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#F15F5F';
-                            break;
-                            case 512:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#F2CB61';
-                            break;
-                            case 1024:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#E5D85C';
-                            break;
-                            case 2048:
-                            blocks[(i*4)+j].style.display = 'block';
-                            blocks[(i*4)+j].style.backgroundColor = '#86E57F';
-                            break;
-                        }
-                }
-            }
-        }
-
         function checkmove(){ // Q.2 블럭이 이동이 되었는지를 체크해주고, 되었다면 스코어를 1 올려주는 커맨드
             for(let x = 0; x < 4 ; x++){
                 for(let y = 0; y < 4; y++){ 
@@ -1037,10 +976,14 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             }
             
             if(move == true){
-                newblock(); 
+                boardcheck();
+                newblock();
+                resetpx();
+                intervalId = setInterval(newdrawAnimation,1);
                 score = score + 1;
                 scoretext = document.getElementById('scoretext');
                 scoretext.innerText = score+""
+                draw();
             }
         }
 
@@ -1068,6 +1011,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
 
         function first(){ //Q.2 게임 시작시, 숫자2,숫자4,숫자2,4 블럭 중 어떤 블럭으로 생성되는지 정해주는 커맨드
             var rand =  parseInt(Math.random() * 2.99);
+            boardcheck();
             switch (rand) {
                 case 0:
                     newblock();
@@ -1076,10 +1020,12 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                     newblock4();
                 break;
                 case 2:
-                    newblock();
                     newblock4();
+                    newblock();
                 break;
             }
+            resetpx();
+            intervalId = setInterval(newdrawAnimation,1);
         }
 
         function start(){ //Q.2 이전 데이터 들을 초기화 하고 게임 시작을 해주는 커맨드
@@ -1107,13 +1053,6 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             unstart.style.display = 'none';
             win.style.display = 'none';
             gameo.style.display = 'none';
-        }
-        
-        function debugboard(){
-            board = [[4,2,2,2],
-                     [2,2,2,2],
-                     [2,8,2,2],
-                     [4,8,4,2]];
         }
 
         function resetpx(){ //Q.2 애니메이션 커맨드에 필요한 데이터를 초기화 시켜주는 커맨드
@@ -1196,7 +1135,6 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                 clearInterval(intervalId);
                 console.log("끝");
                 checkmove();
-                draw();
             }
         }
 
@@ -1232,7 +1170,6 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                 clearInterval(intervalId);
                 console.log("끝");
                 checkmove();
-                draw();
             }
         }
 
@@ -1268,49 +1205,57 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
                 clearInterval(intervalId);
                 console.log("끝");
                 checkmove();
-                draw();
             }
         }
         
-        function drawAnimation(){
+        function newdrawAnimation(){ //Q.2 새로운 블럭이 생성될때 애니메이션으로 출력해주는 커맨드
             var endani = 0;
+            onoff = true;
             for(let x = 0; x < 4 ; x++){
                 for(let y = 0; y < 4; y++){
-                    if(check[x][y]!=board[x][y]){
-                        if(scaleblock[i][j]<119){
-                            console.log("시발");
-                            blocks[(x*4)+y].style.width = scaleblock[i][j] + 5;
-                            blocks[(x*4)+y].style.heigth = scaleblock[i][j] + 5;
-                            scaleblock[i][j] = scaleblock[i][j] + 5   
+                    if(checkblock[x][y]!=board[x][y]){
+                        if(scaleblock[x][y]<119){
+                            console.log(board);
+                            if(board[x][y] == 2){
+                                console.log("시발2");
+                                blocks[(x*4)+y].style.backgroundColor = '#FFD8D8';
+                            }else{   
+                                console.log("시발4");
+                                blocks[(x*4)+y].style.backgroundColor = '#FAE0C8';
+                            }
+                            blocks[(x*4)+y].style.display = 'block';
+                            blocks[(x*4)+y].style.width = scaleblock[x][y] + 5;
+                            blocks[(x*4)+y].style.height = scaleblock[x][y] + 5;
+                            scaleblock[x][y] = scaleblock[x][y] + 5;   
                         }else{
-                            temp[i][j] = 1;
+                            temp[x][y] = 1;
                         }          
                     }else{
-                        temp[i][j] = 1;
-                    }
+                        temp[x][y] = 1;
+                    }endani = endani + temp[x][y];
                 }
             }
             if(endani==16){
                 clearInterval(intervalId);
                 console.log("끝");
+                console.log(board);
                 draw();
             }
         }
     
-    function openfile(){ // Q.1 & Q.2 html파일 실행시 class = 'block' div를 16개 생성해 blocks배열에 넣어주고, id = 'app'의 div에 추가해주는 커맨드. 이후 blocks 배열로 사용할 div를 참조하고 더이상 id = 'block' div를 생성하지 않는다. 사용하지 않는 div는 style none해준다
-    for(let i= 0; i<4;i++){
-            for(let j= 0; j<4;j++){
-                var app = document.getElementById('app');
-                var div = document.createElement('div');
-                div.className = 'block';
-                app.appendChild(div);
-                
+        function openfile(){ // Q.1 & Q.2 html파일 실행시 class = 'block' div를 16개 생성해 blocks배열에 넣어주고, id = 'app'의 div에 추가해주는 커맨드. 이후 blocks 배열로 사용할 div를 참조하고 더이상 id = 'block' div를 생성하지 않는다. 사용하지 않는 div는 style none해준다
+            for(let i= 0; i<4;i++){
+                for(let j= 0; j<4;j++){
+                    var app = document.getElementById('app');
+                    var div = document.createElement('div');
+                    div.className = 'block';
+                    app.appendChild(div); 
+                }
             }
-        }
         blocks = document.getElementsByClassName("block");
     }
 
-    function keydown(e){ // Q.2 키를 누를경우 해당키에 대한 커맨드를 실행시키는 커맨드이자 사실상 gameloop 순차적으로 커맨드가 실행되며, 커맨드가 다 실행되기 전까지 한번더 실행되지 않도록 막는다.
+        function keydown(e){ // Q.2 키를 누를경우 해당키에 대한 커맨드를 실행시키는 커맨드이자 사실상 gameloop 순차적으로 커맨드가 실행되며, 커맨드가 다 실행되기 전까지 한번더 실행되지 않도록 막는다.
             if(onoff==false){
                 onoff = true;
                 console.log(e.key);
@@ -1322,7 +1267,7 @@ background: linear-gradient(to right, #61045F, #AA076B); /* W3C, IE 10+/ Edge, F
             }
         }
 
-    function keyup(){ // Q.2 키를 땔경우 커맨드가 다 실행되었다면 다시 키를 입력할 수 있도록 해주는 커맨드
+        function keyup(){ // Q.2 키를 땔경우 커맨드가 다 실행되었다면 다시 키를 입력할 수 있도록 해주는 커맨드
             onoff=false;
         }
 
